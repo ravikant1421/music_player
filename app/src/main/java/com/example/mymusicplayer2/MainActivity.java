@@ -1,13 +1,14 @@
 package com.example.mymusicplayer2;
 
-import static com.example.mymusicplayer2.AllSongsFragment.allSongsAdapter;
+
 import static com.example.mymusicplayer2.AllSongsFragment.mySortPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.appcompat.widget.SearchView;
+
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -19,13 +20,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.FrameLayout;
+
 
 import com.google.android.material.tabs.TabLayout;
 import com.karumi.dexter.Dexter;
@@ -48,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
      public static boolean shuffleBoolean=false;
      public static boolean  repeatBoolean=false;
      static ArrayList<MusicFiles> albums=new ArrayList<>();
+
+    static ArrayList<MusicFiles> artists=new ArrayList<>();
+    static ArrayList<MusicFiles> paths=new ArrayList<>();
     public static final String MUSIC_LAST_PLAYED="LAST_PLAYED";
     public static final String MUSIC_FILE="STORED_MUSIC";
     public static final String ARTIST_NAME="ARTIST NAME";
@@ -89,7 +92,9 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences=getSharedPreferences(mySortPreferences,MODE_PRIVATE);
         String sortOrder=preferences.getString("sorting","sortByName");
         String order=null;
-         ArrayList<String> duplicate=new ArrayList<>();
+        ArrayList<String> duplicateAlbum=new ArrayList<>();
+        ArrayList<String> duplicateArtist=new ArrayList<>();
+        ArrayList<String> duplicatePath=new ArrayList<>();
         ArrayList<MusicFiles> tempAudioList =new ArrayList<>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         switch (sortOrder)
@@ -98,10 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 order=MediaStore.MediaColumns.DISPLAY_NAME+" ASC";
                 break;
             case "sortByDate":
-                order=MediaStore.MediaColumns.DISPLAY_NAME+" ASC";
+                order=MediaStore.MediaColumns.DISPLAY_NAME+" DESC";
                 break;
             case "sortBySize":
-                order=MediaStore.MediaColumns.DISPLAY_NAME+" DESC";
+                order=MediaStore.MediaColumns.DISPLAY_NAME+" ASC";
                 break;
         }
         String[] projection={
@@ -132,10 +137,19 @@ public class MainActivity extends AppCompatActivity {
                 String path=cursor.getString(4);
                 MusicFiles musicFiles=new MusicFiles(title,album,duration,artist,path);
                 tempAudioList.add(musicFiles);
-                if (!duplicate.contains(album))
+                if (!duplicateAlbum.contains(album))
                 {
                     albums.add(musicFiles);
-                    duplicate.add(album);
+                    duplicateAlbum.add(album);
+                }
+                if (!duplicateArtist.contains(artist))
+                {
+                    artists.add(musicFiles);
+                    duplicateArtist.add(artist);
+                }
+                if (!duplicatePath.contains(path)){
+                    paths.add(musicFiles);
+                    duplicatePath.add(path);
                 }
             }
             cursor.close();
@@ -186,11 +200,9 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragments(new AlbumFragment(),"Albums");
         viewPagerAdapter.addFragments(new FolderFragment(),"Folder");
         viewPagerAdapter.addFragments(new ArtistFragment(),"Artist");
-        viewPagerAdapter.addFragments(new GenreFragment(),"Genre");
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
-
-    }
+     }
 
     @Override
     protected void onResume() {
@@ -199,8 +211,7 @@ public class MainActivity extends AppCompatActivity {
         String path=preferences.getString(MUSIC_FILE,null);
         String artist=preferences.getString(ARTIST_NAME,null);
         String songName=preferences.getString(SONG_NAME,null);
-        if(path!=null)
-        {
+        if(path!=null) {
             SHOW_MINI_PLAYER=true;
             PATH_TO_FRAG =path;
             ARTIST_TO_FRAG=artist;

@@ -69,7 +69,7 @@ public class AlbumDetails extends AppCompatActivity {
                    {
                        Glide.with(this)
                                .asBitmap()
-                               .load(R.drawable.ic_baseline_music_note_24)
+                               .load(R.drawable.ic_music_player)
                                .into(albumPhoto);
                    }
 
@@ -81,7 +81,7 @@ public class AlbumDetails extends AppCompatActivity {
         {
             albumDetailArrayList.add(albumMusicFiles.get(i).getTitle());
         }
-        albumDetailAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line, albumDetailArrayList);
+        albumDetailAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_itrm_text,R.id.listItemTextview, albumDetailArrayList);
         albumDetailListView.setAdapter(albumDetailAdapter);
         albumDetailListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

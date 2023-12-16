@@ -3,7 +3,7 @@ package com.example.mymusicplayer2;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -59,17 +59,13 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyHolderAlbu
         {
             Glide.with(context)
                     .asBitmap()
-                    .load(R.drawable.ic_baseline_music_note_24)
+                    .load(R.drawable.ic_music_player)
                     .into(holder.albumImage);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(context,AlbumDetails.class);
-                intent.putExtra("albumName",musicFiles.get(position).getAlbum());
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent=new Intent(context,AlbumDetails.class);
+            intent.putExtra("albumName",musicFiles.get(position).getAlbum());
+            context.startActivity(intent);
         });
     }
 

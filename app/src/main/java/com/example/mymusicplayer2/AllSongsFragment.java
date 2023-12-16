@@ -131,7 +131,7 @@ public class AllSongsFragment extends Fragment {
            for (int i = 0; i < musicFiles.size(); i++) {
                arrayList.add(musicFiles.get(i).getTitle());
            }
-           allSongsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, arrayList);
+           allSongsAdapter = new ArrayAdapter<>(getContext(),R.layout.list_itrm_text,R.id.listItemTextview, arrayList);
            allSongsListView.setAdapter(allSongsAdapter);
        }
        allSongsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

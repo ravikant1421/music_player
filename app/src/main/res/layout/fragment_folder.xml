@@ -3,12 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FolderFragment">
+    tools:context=".FolderFragment"
+    android:background="#514F4F">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/recyclerView"
+        android:divider="@color/black"
+        android:dividerHeight="10sp"
+        android:padding="5dp"/>
 
 </FrameLayout>

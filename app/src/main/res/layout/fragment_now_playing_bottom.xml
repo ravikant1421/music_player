@@ -1,64 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".NowPlayingFragmentBottom">
+    tools:context=".NowPlayingFragmentBottom"
+    android:visibility="gone"
+    >
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="15dp"
+        app:cardCornerRadius="25dp"
+        >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/cardBottomPlayer"
         android:background="@color/black"
         android:padding="5dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/bottomAlbumArtCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="15dp"
+            app:cardCornerRadius="25dp"
+            >
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_baseline_music_note_24"
+            android:src="@drawable/ic_music_player"
             android:id="@+id/bottomAlbumArt"/>
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/skipNextBottom"
-            android:src="@drawable/ic_skip_next"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"/>
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        </androidx.cardview.widget.CardView>
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_play"
-            android:layout_toStartOf="@+id/skipNextBottom"
-            android:layout_marginEnd="10dp"
-            app:fabSize="mini"
-            android:layout_centerVertical="true"
-            android:id="@+id/playPauseMiniPlayerButton"
-            android:backgroundTint="#D59230"/>
+            android:layout_toEndOf="@+id/bottomAlbumArtCard"
+            android:layout_toStartOf="@+id/skipPreviousBottom"
+            android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/songNameMiniPlayer"
             android:text="This song is Playing"
-            android:textColor="#D89B40"
+            android:textColor="@color/yellow"
             android:layout_marginTop="5dp"
             android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/bottomAlbumArt"
             android:textSize="18sp"
             android:maxLines="1"
-            android:layout_toStartOf="@+id/playPauseMiniPlayerButton"/>
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/artistNameMiniPlayer"
             android:layout_below="@+id/songNameMiniPlayer"
             android:text="Artist Name"
-            android:textColor="#D89B40"
+            android:textColor="@color/yellow"
             android:layout_marginTop="5dp"
             android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/bottomAlbumArt"
             android:textSize="15sp"
             android:maxLines="1"
-            android:layout_toStartOf="@+id/playPauseMiniPlayerButton"/>
+            />
+        </LinearLayout>
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -67,7 +72,27 @@
             android:layout_toStartOf="@+id/playPauseMiniPlayerButton"
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/playPauseMiniPlayerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/skipNextBottom"
+            android:backgroundTint="@color/yellow"
+            android:src="@drawable/ic_play"
+            app:fabSize="mini"
+            tools:ignore="SpeakableTextPresentCheck" />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/skipNextBottom"
+            android:src="@drawable/ic_skip_next"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"/>
     </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
 
 

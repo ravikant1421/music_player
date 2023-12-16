@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CCA42E"
+    android:background="@color/grey"
     tools:context=".AlbumDetails">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:id="@+id/albumPhoto"
         android:background="@color/black"
-        android:src="@drawable/ic_baseline_music_note_24"
+        android:src="@drawable/ic_music_player"
         android:scaleType="centerCrop"/>
     <ImageView
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:layout_below="@+id/albumPhoto"
-       android:background="#CCA42E"
+       android:background="@color/grey"
        android:id="@+id/albumDetailListView"
        />
 

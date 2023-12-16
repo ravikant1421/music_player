@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AlbumFragment"
-    android:background="@color/black">
+    android:background="@color/grey">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recyclerView"
-        android:divider="@color/black"
+        android:divider="@color/grey"
         android:dividerHeight="10sp"
         android:padding="5dp"/>
 
