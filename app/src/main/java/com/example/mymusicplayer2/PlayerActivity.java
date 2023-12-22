@@ -160,6 +160,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
            (which is likely an activity, fragment, or service)
            BIND_AUTO_CREATE: This parameter specifies the binding options for the service. In this case,
            BIND_AUTO_CREATE indicates that the service should be created if it does not already exist
+            bindService(intent,this,BIND_AUTO_CREATE); here this is the instance of ServiceConnection interface .
          */
             bindService(intent,this,BIND_AUTO_CREATE);
             playThreadBtn();

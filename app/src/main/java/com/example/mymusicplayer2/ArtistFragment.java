@@ -22,8 +22,6 @@ public class ArtistFragment extends Fragment {
     ListView allArtistListView;
     View view;
     static ArrayAdapter<String> allArtistAdapter;
-
-
     public ArtistFragment() {
         // Required empty public constructor
     }

@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 
 import com.google.android.material.tabs.TabLayout;
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
      public static boolean shuffleBoolean=false;
      public static boolean  repeatBoolean=false;
      static ArrayList<MusicFiles> albums=new ArrayList<>();
-
     static ArrayList<MusicFiles> artists=new ArrayList<>();
     static ArrayList<MusicFiles> paths=new ArrayList<>();
     public static final String MUSIC_LAST_PLAYED="LAST_PLAYED";
@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        
-                       musicFiles= getAllAudio(getApplicationContext());
                         initViewPager();
-
+                        Toast.makeText(getApplicationContext(),"Before",Toast.LENGTH_SHORT).show();
+                       musicFiles= getAllAudio(getApplicationContext());
+                        Toast.makeText(getApplicationContext(),"After",Toast.LENGTH_SHORT).show();
                     }
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
@@ -137,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                 String path=cursor.getString(4);
                 MusicFiles musicFiles=new MusicFiles(title,album,duration,artist,path);
                 tempAudioList.add(musicFiles);
+
+
                 if (!duplicateAlbum.contains(album))
                 {
                     albums.add(musicFiles);
