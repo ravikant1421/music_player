@@ -1,7 +1,6 @@
 package com.example.mymusicplayer2;
 
 import static com.example.mymusicplayer2.AlbumDetails.albumMusicFiles;
-
 import static com.example.mymusicplayer2.ArtistDetails.artistMusicFiles;
 import static com.example.mymusicplayer2.FolderDetails.folderMusicFiles;
 import static com.example.mymusicplayer2.MainActivity.musicFiles;
@@ -59,6 +58,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
     public Thread playThread,prevThread,nextThread;
     public static ArrayList<MusicFiles> songsList=new ArrayList<>();
     static MusicService musicService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -8,10 +8,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -48,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
      ViewPager viewPager;
      public static boolean shuffleBoolean=false;
      public static boolean  repeatBoolean=false;
-     static ArrayList<MusicFiles> albums=new ArrayList<>();
-    static ArrayList<MusicFiles> artists=new ArrayList<>();
-    static ArrayList<MusicFiles> paths=new ArrayList<>();
     public static final String MUSIC_LAST_PLAYED="LAST_PLAYED";
     public static final String MUSIC_FILE="STORED_MUSIC";
     public static final String ARTIST_NAME="ARTIST NAME";
@@ -73,9 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
                         initViewPager();
-                        Toast.makeText(getApplicationContext(),"Before",Toast.LENGTH_SHORT).show();
-                       musicFiles= getAllAudio(getApplicationContext());
-                        Toast.makeText(getApplicationContext(),"After",Toast.LENGTH_SHORT).show();
+                        musicFiles = getAllAudio(getApplicationContext());
                     }
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
@@ -92,9 +86,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences preferences=getSharedPreferences(mySortPreferences,MODE_PRIVATE);
         String sortOrder=preferences.getString("sorting","sortByName");
         String order=null;
-        ArrayList<String> duplicateAlbum=new ArrayList<>();
-        ArrayList<String> duplicateArtist=new ArrayList<>();
-        ArrayList<String> duplicatePath=new ArrayList<>();
         ArrayList<MusicFiles> tempAudioList =new ArrayList<>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         switch (sortOrder)
@@ -137,29 +128,11 @@ public class MainActivity extends AppCompatActivity {
                 String path=cursor.getString(4);
                 MusicFiles musicFiles=new MusicFiles(title,album,duration,artist,path);
                 tempAudioList.add(musicFiles);
-
-
-                if (!duplicateAlbum.contains(album))
-                {
-                    albums.add(musicFiles);
-                    duplicateAlbum.add(album);
-                }
-                if (!duplicateArtist.contains(artist))
-                {
-                    artists.add(musicFiles);
-                    duplicateArtist.add(artist);
-                }
-                if (!duplicatePath.contains(path)){
-                    paths.add(musicFiles);
-                    duplicatePath.add(path);
-                }
             }
             cursor.close();
         }
         return tempAudioList;
     }
-
-
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final ArrayList<Fragment> fragments;
@@ -175,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
             fragments.add(fragment);
             titles.add(title);
         }
-
         @NonNull
         @Override
         public Fragment getItem(int position) {
@@ -193,6 +165,8 @@ public class MainActivity extends AppCompatActivity {
             return titles.get(position);
         }
     }
+
+
     private void initViewPager() {
          viewPager=findViewById(R.id.viewPager);
          tabLayout=findViewById(R.id.tabLayout);
@@ -203,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragments(new FolderFragment(),"Folder");
         viewPagerAdapter.addFragments(new ArtistFragment(),"Artist");
         viewPager.setAdapter(viewPagerAdapter);
+        viewPager.setOffscreenPageLimit(viewPagerAdapter.getCount());
         tabLayout.setupWithViewPager(viewPager);
      }
 

@@ -200,8 +200,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         intent.putExtra("FromNotification","FromNotificationValue");
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-
-
         Intent prevIntent=new Intent(this,NotificationReceiver.class)
                 .setAction(ACTION_PREVIOUS);
         PendingIntent prevPending=PendingIntent

@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -91,6 +92,10 @@ public class AllSongsFragment extends Fragment {
         // onCreateOptionsMenu(Menu, MenuInflater) and related methods.
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        arrayList = new ArrayList<>();
+        for (int i = 0; i < musicFiles.size(); i++) {
+            arrayList.add(musicFiles.get(i).getTitle());
+        }
     }
 
     @Override
@@ -124,24 +129,22 @@ public class AllSongsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
        view=inflater.inflate(R.layout.fragment_all_songs, container, false);
-       if(musicFiles.size()>=1) {
-           allSongsListView = view.findViewById(R.id.allSongsListView);
-           arrayList = new ArrayList<>();
-           for (int i = 0; i < musicFiles.size(); i++) {
-               arrayList.add(musicFiles.get(i).getTitle());
-           }
-           allSongsAdapter = new ArrayAdapter<>(getContext(),R.layout.list_itrm_text,R.id.listItemTextview, arrayList);
-           allSongsListView.setAdapter(allSongsAdapter);
+         if(musicFiles.size()>=1) {
+          allSongsListView = view.findViewById(R.id.allSongsListView);
+             allSongsAdapter = new ArrayAdapter<>(getContext(),R.layout.list_itrm_text,R.id.listItemTextview, arrayList);
+             allSongsListView.setAdapter(allSongsAdapter);
+             allSongsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                 @Override
+                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                     Intent intent=new Intent(getContext(),PlayerActivity.class);
+                     intent.putExtra("position",position);
+                     startActivity(intent);
+                 }
+             });
        }
-       allSongsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-           @Override
-           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               Intent intent=new Intent(getContext(),PlayerActivity.class);
-               intent.putExtra("position",position);
-               startActivity(intent);
-           }
-       });
+
 
         return view;
 
