@@ -3,15 +3,13 @@ package com.example.mymusicplayer2;
 import static com.example.mymusicplayer2.AlbumDetails.albumMusicFiles;
 import static com.example.mymusicplayer2.ArtistDetails.artistMusicFiles;
 import static com.example.mymusicplayer2.FolderDetails.folderMusicFiles;
+import static com.example.mymusicplayer2.MainActivity.isBottomFragShown;
 import static com.example.mymusicplayer2.MainActivity.musicFiles;
 import static com.example.mymusicplayer2.MainActivity.repeatBoolean;
 import static com.example.mymusicplayer2.MainActivity.shuffleBoolean;
 
 import static com.example.mymusicplayer2.MusicService.notification;
-import static com.example.mymusicplayer2.NowPlayingFragmentBottom.bottomNextBtnFlag;
-import static com.example.mymusicplayer2.NowPlayingFragmentBottom.bottomPrevBtnFlag;
 import static com.example.mymusicplayer2.NowPlayingFragmentBottom.clickedSong;
-import static com.example.mymusicplayer2.NowPlayingFragmentBottom.playBottomFlag;
 import static com.example.mymusicplayer2.NowPlayingFragmentBottom.showLayoutFlag;
 
 import android.content.ComponentName;
@@ -57,7 +55,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
     private final Handler handler=new Handler();
     public Thread playThread,prevThread,nextThread;
     public static ArrayList<MusicFiles> songsList=new ArrayList<>();
-    static MusicService musicService;
+    public static MusicService musicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +150,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
     @Override
     protected void onResume() {
+        super.onResume();
         if(!showLayoutFlag){
             showLayoutFlag=true;
         }
@@ -166,8 +165,6 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
             playThreadBtn();
             nextThreadBtn();
             prevThreadBtn();
-
-        super.onResume();
     }
     private void playThreadBtn() {
         playThread=new Thread(){
@@ -215,19 +212,6 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
                 };
                 prevThread.start();
             }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        bottomNextBtnFlag=false;
-        bottomPrevBtnFlag=false;
-        if(musicService.isPlaying()){
-            playBottomFlag=true;
-        }
-        else {
-            playBottomFlag=false;
-        }
-        unbindService(this);
-    }
     private int getRandom(int i) {
         Random random=new Random();
         return random.nextInt(i+1);
@@ -356,6 +340,15 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
 
 //                playPauseButton.setImageResource(R.drawable.ic_play);
             }
+            if(isBottomFragShown){
+                if(musicService.isPlaying()){
+                    new NowPlayingFragmentBottom().changeMetaDataFragBottom(R.drawable.ic_pause);
+                }
+                else{
+                    new NowPlayingFragmentBottom().changeMetaDataFragBottom(R.drawable.ic_play);
+                }
+
+            }
         }
     }
 
@@ -391,8 +384,14 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
                         handler.postDelayed(this, 1000);
                     }
                 });
+                if(isBottomFragShown) {
+                    if (musicService.isPlaying()) {
+                        new NowPlayingFragmentBottom().changeMetaDataFragBottom(R.drawable.ic_pause);
+                    } else {
+                        new NowPlayingFragmentBottom().changeMetaDataFragBottom(R.drawable.ic_play);
+                    }
+                }
             }
-            new NowPlayingFragmentBottom().setPlayPauseMiniPlayerIc(musicService,NowPlayingFragmentBottom.view);
         }
     }
 
@@ -505,9 +504,7 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
         startService(intent);
     }
     private  void metaData(Uri uri,String title,String artist)
-    {   if(bottomNextBtnFlag || bottomPrevBtnFlag){
-        return;
-        }
+    {
         MediaMetadataRetriever retriever=new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
         byte[] art=retriever.getEmbeddedPicture();
@@ -548,5 +545,4 @@ public class PlayerActivity extends AppCompatActivity implements ActionPlaying, 
     public void onServiceDisconnected(ComponentName name) {
         musicService=null;
     }
-
 }

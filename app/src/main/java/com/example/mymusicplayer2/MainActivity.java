@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public static String PATH_TO_FRAG=null;
     public static String ARTIST_TO_FRAG=null;
     public static String SONG_NAME_TO_FRAG=null;
+    public static boolean isBottomFragShown =false;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {

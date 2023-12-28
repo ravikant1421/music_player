@@ -108,7 +108,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onCreate() {
         /* MediaSessionCompat is a class from the Android Support Library that provides a way to interact with media playback from outside of the media playback service or activity,
            such as through notifications, lock screens, or hardware media buttons. */
-
         mediaSessionCompat=new MediaSessionCompat(getBaseContext(),"My Audio");
         super.onCreate();
     }
