@@ -12,5 +12,14 @@
         android:id="@+id/folderDetailListView"
         android:background="@color/grey"
         />
+    <TextView
+        android:id="@+id/folder_detail_no_item_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/no_item_present"
+        android:textColor="@color/yellow"
+        android:textSize="20sp"
+        android:visibility="invisible" />
 
 </RelativeLayout>

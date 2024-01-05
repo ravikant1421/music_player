@@ -14,11 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.MyHolderFolder>{
-    private Context context;
-    private ArrayList<String> folders;
+    Context context;
+    ArrayList<String> folders;
     View view;
-    public FolderAdapter(){
-    }
 
     public FolderAdapter(Context context, ArrayList<String> folders) {
         this.context = context;
@@ -32,16 +30,12 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.MyHolderFo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolderFolder holder, int position) {
+    public void onBindViewHolder( MyHolderFolder holder, int position) {
         holder.folderName.setText(folders.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(view.getContext(),FolderDetails.class);
-                intent.putExtra("FolderNameKey",folders.get(position));
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent=new Intent(view.getContext(),FolderDetails.class);
+            intent.putExtra("FolderNameKey",folders.get(position));
+            context.startActivity(intent);
         });
     }
 
@@ -50,7 +44,7 @@ public class FolderAdapter extends RecyclerView.Adapter<FolderAdapter.MyHolderFo
         return folders.size();
     }
 
-    public class MyHolderFolder extends RecyclerView.ViewHolder{
+    public static class MyHolderFolder extends RecyclerView.ViewHolder{
         TextView folderName;
         public MyHolderFolder(@NonNull View itemView) {
             super(itemView);

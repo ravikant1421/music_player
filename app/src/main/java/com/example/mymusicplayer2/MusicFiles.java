@@ -1,7 +1,7 @@
 package com.example.mymusicplayer2;
 
+/** @noinspection ALL*/
 public class MusicFiles {
-    MusicFiles(){}
     private String title;
     private String album;
     private String duration;

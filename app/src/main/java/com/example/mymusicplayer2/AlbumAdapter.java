@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyHolderAlbum> {
-    private Context context;
-    private ArrayList<MusicFiles> musicFiles;
+     Context context;
+     ArrayList<MusicFiles> musicFiles;
     View view;
-    public AlbumAdapter(){
-    }
 
     public AlbumAdapter(Context context, ArrayList<MusicFiles> musicFiles) {
         this.context = context;
@@ -41,11 +40,12 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyHolderAlbu
     @Override
     public void onBindViewHolder(@NonNull MyHolderAlbum holder, int position) {
         holder.albumName.setText(musicFiles.get(position).getAlbum());
-        byte[]  image = new byte[0];
+        byte[]  image ;
         try {
             image = getAlbumArt(musicFiles.get(position).getPath());
         } catch (IOException e) {
             e.printStackTrace();
+            image = null;
         }
         if(image!=null)
         {
@@ -73,7 +73,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyHolderAlbu
         return musicFiles.size();
     }
 
-    public class MyHolderAlbum extends RecyclerView.ViewHolder {
+    public static class MyHolderAlbum extends RecyclerView.ViewHolder {
         ImageView albumImage;
         TextView albumName;
         public MyHolderAlbum(@NonNull View itemView) {
@@ -88,6 +88,9 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.MyHolderAlbu
         retriever.setDataSource(uri);
         byte[] art=retriever.getEmbeddedPicture();
         retriever.release();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            retriever.close();
+        }
         return art;
     }
 }

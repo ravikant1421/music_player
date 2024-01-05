@@ -5,10 +5,10 @@ import static com.example.mymusicplayer2.MainActivity.musicFiles;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -48,14 +48,13 @@ public class AlbumDetails extends AppCompatActivity {
         {
             if(albumName.equals(musicFiles.get(i).getAlbum()))
             {  if(flagAlbumPhoto)
-               {   Uri uri= Uri.parse(musicFiles.get(i).getPath());
-                   MediaMetadataRetriever retriever=new MediaMetadataRetriever();
-                   retriever.setDataSource(uri.toString());
-                   byte[] art=retriever.getEmbeddedPicture();
+               {
+                   byte[] art;
                    try {
-                       retriever.release();
-                   } catch (IOException e) {
-                       e.printStackTrace();
+                      art =getAlbumArt(Uri.parse(musicFiles.get(i).getPath()));
+                   }
+                   catch (Exception e){
+                      art = null;
                    }
                    flagAlbumPhoto=false;
                    if(art!=null)
@@ -81,16 +80,23 @@ public class AlbumDetails extends AppCompatActivity {
         {
             albumDetailArrayList.add(albumMusicFiles.get(i).getTitle());
         }
-        albumDetailAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_itrm_text,R.id.listItemTextview, albumDetailArrayList);
+        albumDetailAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.list_item_text,R.id.listItemTextview, albumDetailArrayList);
         albumDetailListView.setAdapter(albumDetailAdapter);
-        albumDetailListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(getApplicationContext(),PlayerActivity.class);
-                intent.putExtra("FromAlbumDetailKey","FromAlbumDetailValue");
-                intent.putExtra("position",position);
-                startActivity(intent);
-            }
+        albumDetailListView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent=new Intent(getApplicationContext(),PlayerActivity.class);
+            intent.putExtra("FromAlbumDetailKey","FromAlbumDetailValue");
+            intent.putExtra("position",position);
+            startActivity(intent);
         });
+    }
+    public byte[] getAlbumArt(Uri uri) throws IOException {
+        MediaMetadataRetriever retriever=new MediaMetadataRetriever();
+        retriever.setDataSource(uri.toString());
+        byte[] art=retriever.getEmbeddedPicture();
+        retriever.release();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            retriever.close();
+        }
+        return art;
     }
 }
