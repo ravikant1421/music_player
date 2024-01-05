@@ -10,10 +10,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +22,7 @@ import java.util.Set;
 public class ArtistFragment extends Fragment {
     ArrayList<String> allArtist;
     ListView allArtistListView;
+    TextView noItemFoundTV;
     View view;
     static ArrayList<MusicFiles> artists=new ArrayList<>();
     static ArrayAdapter<String> allArtistAdapter;
@@ -48,21 +49,21 @@ public class ArtistFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view=inflater.inflate(R.layout.fragment_artist, container, false);
-
-
         if(artists.size()>=1) {
             allArtistListView = view.findViewById(R.id.allArtistListView);
-            allArtistAdapter = new ArrayAdapter<>(getContext(), R.layout.list_itrm_text,R.id.listItemTextview, allArtist);
+            allArtistAdapter = new ArrayAdapter<>(requireContext(), R.layout.list_item_text,R.id.listItemTextview, allArtist);
             allArtistListView.setAdapter(allArtistAdapter);
-        }
-        allArtistListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            allArtistListView.setOnItemClickListener((parent, view, position, id) -> {
                 Intent intent=new Intent(getContext(),ArtistDetails.class);
                 intent.putExtra("artistName",allArtist.get(position));
                 startActivity(intent);
-            }
-        });
+            });
+        }
+        else {
+            allArtistListView.setVisibility(View.INVISIBLE);
+            noItemFoundTV.setVisibility(View.VISIBLE);
+        }
+
 
         return view;
     }

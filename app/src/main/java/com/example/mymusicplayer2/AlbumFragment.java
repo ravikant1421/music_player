@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ public class AlbumFragment extends Fragment {
     static ArrayList<MusicFiles> albums = new ArrayList<>();
     RecyclerView recyclerView;
     AlbumAdapter albumAdapter;
-    ProgressBar albumProgressbar;
+    TextView noItemPresentTV;
     View view;
 
     public AlbumFragment() {
@@ -42,31 +43,23 @@ public class AlbumFragment extends Fragment {
             }
         }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (albums.size() >= 1) {
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-            albumAdapter = new AlbumAdapter(getContext(), albums);
-            recyclerView.setAdapter(albumAdapter);
-            recyclerView.setVisibility(View.VISIBLE);
-        }
-        else{
-
-        }
-        albumProgressbar.setVisibility(View.INVISIBLE);
-
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_album, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
-        albumProgressbar=view.findViewById(R.id.album_progress_bar);
+        noItemPresentTV = view.findViewById(R.id.album_no_item_tv);
+        if (albums.size() >= 1) {
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            albumAdapter = new AlbumAdapter(getContext(), albums);
+            recyclerView.setAdapter(albumAdapter);
+        }
+        else{
+            recyclerView.setVisibility(View.INVISIBLE);
+            noItemPresentTV.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 }

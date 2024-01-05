@@ -1,14 +1,11 @@
 package com.example.mymusicplayer2;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.mymusicplayer2.MainActivity.musicFiles;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
@@ -18,20 +15,25 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import java.util.stream.Collectors;
 
 
 public class AllSongsFragment extends Fragment {
     ArrayList<String> arrayList;
     ListView allSongsListView;
+    ProgressBar progressBar;
+    TextView noItemFoundTV;
     View view;
     static ArrayAdapter<String> allSongsAdapter;
-    public static String mySortPreferences="SortOrder";
     public AllSongsFragment() {
         // Required empty public constructor
     }
@@ -46,48 +48,46 @@ public class AllSongsFragment extends Fragment {
 
         //getting action defined in all_songs_fragment_menu menu
         SearchView searchView=(SearchView) item.getActionView();
+        assert searchView != null;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             // onQueryTextSubmit() Called when the user submits the query
             @Override
             public boolean onQueryTextSubmit(String query) {
-
-                return false;
+                return true;
             }
 
            // onQueryTextChange() Called when the query text is changed by the user.
             @Override
             public boolean onQueryTextChange(String newText) {
+                progressBar.setVisibility(View.VISIBLE);
+                noItemFoundTV.setVisibility(View.INVISIBLE);
                 ListView searchedSongsListView=view.findViewById(R.id.allSongsListView);
-                ArrayList arrayList=new ArrayList<>();
+                searchedSongsListView.setVisibility(View.VISIBLE);
                 String userInput=newText.toLowerCase();
-                for(MusicFiles song:musicFiles)
-                {
-                    if(song.getTitle().toLowerCase().contains(userInput))
-                    {
-                        arrayList.add(song.getTitle());
-                    }
-                }
-                ArrayAdapter allSongsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, arrayList);
+                List<String> arrayList= musicFiles.stream().map(MusicFiles::getTitle).filter(title -> title.toLowerCase().contains(userInput)).collect(Collectors.toList());
+                ArrayAdapter<String> allSongsAdapter = new ArrayAdapter<>(requireContext(),R.layout.list_item_text,R.id.listItemTextview, arrayList);
                 searchedSongsListView.setAdapter(allSongsAdapter);
-                searchedSongsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent=new Intent(getContext(),PlayerActivity.class);
-                        intent.putExtra("searchedAllSongsFragmentKey",arrayList.get(position).toString());
-                        startActivity(intent);
-                    }
-                });
+                progressBar.setVisibility(View.INVISIBLE);
 
-                return false;
+                if(arrayList.size()>=1){
+                    searchedSongsListView.setOnItemClickListener((parent, view, position, id) -> {
+                        Intent intent=new Intent(getContext(),PlayerActivity.class);
+                        intent.putExtra("searchedAllSongsFragmentSong", arrayList.get(position));
+                        startActivity(intent);
+                    });
+                }
+                else{
+                    searchedSongsListView.setVisibility(View.INVISIBLE);
+                    noItemFoundTV.setVisibility(View.VISIBLE);
+                }
+                return true;
             }
         });
-
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         // setHasOptionsMenu() Report that this fragment would like to participate in populating the options menu by receiving a call to
         // onCreateOptionsMenu(Menu, MenuInflater) and related methods.
         setHasOptionsMenu(true);
@@ -97,57 +97,29 @@ public class AllSongsFragment extends Fragment {
             arrayList.add(musicFiles.get(i).getTitle());
         }
     }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        SharedPreferences.Editor editor=this.getActivity().getSharedPreferences(mySortPreferences,MODE_PRIVATE).edit();
-        switch (item.getItemId())
-        {
-            case R.id.byName:
-                editor.putString("sorting","sortByName");
-                editor.apply();
-                this.getActivity().recreate();
-                break;
-            case R.id.byDate:
-                editor.putString("sorting","sortByDate");
-                editor.apply();
-                this.getActivity().recreate();
-                break;
-            case R.id.bySize:
-                editor.putString("sorting","sortBySize");
-                editor.apply();
-                //recreate() Cause this Activity to be recreated with a new instance.
-                this.getActivity().recreate();
-                break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
        view=inflater.inflate(R.layout.fragment_all_songs, container, false);
+        allSongsListView = view.findViewById(R.id.allSongsListView);
+        progressBar = view.findViewById(R.id.progress_bar);
+        noItemFoundTV= view.findViewById(R.id.all_song_no_item_tv);
          if(musicFiles.size()>=1) {
-          allSongsListView = view.findViewById(R.id.allSongsListView);
-             allSongsAdapter = new ArrayAdapter<>(getContext(),R.layout.list_itrm_text,R.id.listItemTextview, arrayList);
+             allSongsAdapter = new ArrayAdapter<>(requireContext(),R.layout.list_item_text,R.id.listItemTextview, arrayList);
              allSongsListView.setAdapter(allSongsAdapter);
-             allSongsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                 @Override
-                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                     Intent intent=new Intent(getContext(),PlayerActivity.class);
-                     intent.putExtra("position",position);
-                     startActivity(intent);
-                 }
+             allSongsListView.setOnItemClickListener((parent, view, position, id) -> {
+                 Intent intent=new Intent(getContext(),PlayerActivity.class);
+                 intent.putExtra("position",position);
+                 startActivity(intent);
              });
-       }
-
-
+        }
+         else{
+             allSongsListView.setVisibility(View.INVISIBLE);
+             noItemFoundTV.setVisibility(View.VISIBLE);
+         }
         return view;
-
     }
 
 }

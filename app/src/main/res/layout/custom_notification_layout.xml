@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/notification_rl_layout"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    >
+    <ImageView
+        android:id="@+id/notification_gradient"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_toStartOf="@+id/notification_image"
+        />
+    <ImageView
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_toStartOf="@+id/notification_image"
+        android:src="@drawable/notification_gradient_bg"
+        />
+        <TextView
+            android:id="@+id/notification_song_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:text="Song Name"
+            />
+        <TextView
+            android:id="@+id/notification_artist_name"
+            android:layout_width="100dp"
+            android:layout_marginTop="1dp"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:layout_below="@id/notification_song_name"
+            android:text="Artist Name"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@+id/notification_artist_name"
+        android:layout_centerVertical="true"
+        >
+        <ImageView
+            android:id="@+id/notification_btnPrevious"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_skip_previou"
+            android:layout_marginEnd="16dp" />
+
+        <ImageView
+            android:id="@+id/notification_btnPlayPause"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_play"
+            android:layout_marginEnd="16dp" />
+
+        <ImageView
+            android:id="@+id/notification_btnNext"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_skip_next"
+            android:layout_marginEnd="16dp" />
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/notification_image"
+        android:layout_width="65dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_music_player"
+        android:layout_alignParentEnd="true"
+        />
+
+
+</RelativeLayout>

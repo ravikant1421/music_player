@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 
 import android.media.MediaMetadataRetriever;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -26,16 +27,17 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+
 
 public class NowPlayingFragmentBottom extends Fragment {
     public ImageView skipNextBottom, skipPreviousBottom, bottomAlbumArt;
     public TextView songNameMiniPlayer, artistNameMiniPlayer;
-    public static String clickedSong;
 
     FloatingActionButton playPauseMiniPlayerButton;
 
     FrameLayout bottomLayout;
-    View view;
+    static View view;
     MusicService musicService;
 
     public static boolean showLayoutFlag = false;
@@ -64,10 +66,16 @@ public class NowPlayingFragmentBottom extends Fragment {
         return view;
     }
 
-    private byte[] getAlbumArt(String uri) {
+    private byte[] getAlbumArt(String uri) throws IOException {
+        byte[] art;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri);
-        return retriever.getEmbeddedPicture();
+        art=retriever.getEmbeddedPicture();
+        retriever.release();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            retriever.close();
+        }
+        return art;
     }
     @Override
     public void onResume() {
@@ -81,8 +89,7 @@ public class NowPlayingFragmentBottom extends Fragment {
         }
         bottomLayout.setOnClickListener(view -> {
             Intent intent = new Intent(getContext(), PlayerActivity.class);
-            clickedSong = songNameMiniPlayer.getText().toString();
-            intent.putExtra("FromLayoutBottomKey", clickedSong);
+            intent.putExtra("FromBottomFrag",true);
             startActivity(intent);
         });
         if (showLayoutFlag) {
@@ -123,7 +130,13 @@ public class NowPlayingFragmentBottom extends Fragment {
         if (SHOW_MINI_PLAYER) {
             if (PATH_TO_FRAG != null) {
                 if (getContext() != null) {
-                    byte[] art = getAlbumArt(PATH_TO_FRAG);
+                    byte[] art ;
+                    try {
+                        art=getAlbumArt(PATH_TO_FRAG);
+                    }
+                    catch (Exception e){
+                        art=null;
+                    }
                     if (art != null) {
                         Glide.with(getContext())
                                 .load(art)
@@ -148,14 +161,18 @@ public class NowPlayingFragmentBottom extends Fragment {
     }
 
     public void changeMetaDataFragBottom(int playPauseIc) {
-        if (getContext()!= null) {
+        if (view.getContext()!= null) {
             SharedPreferences preferences=view.getContext().getSharedPreferences(MUSIC_LAST_PLAYED,MODE_PRIVATE);
             String path=preferences.getString(MUSIC_FILE,null);
             String artistName=preferences.getString(ARTIST_NAME,"");
             String songName=preferences.getString(SONG_NAME,"");
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(path);
-            byte[] art = retriever.getEmbeddedPicture();
+            byte[] art;
+            try {
+                art=getAlbumArt(path);
+            }
+            catch (Exception e){
+                art=null;
+            }
             if (art != null) {
                 Glide.with(view.getContext())
                         .asBitmap()

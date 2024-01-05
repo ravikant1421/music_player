@@ -37,6 +37,12 @@
             android:name="com.example.mymusicplayer2.NowPlayingFragmentBottom"
             tools:layout="@layout/fragment_now_playing_bottom"/>
     </FrameLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

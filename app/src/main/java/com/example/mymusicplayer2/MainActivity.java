@@ -1,8 +1,5 @@
 package com.example.mymusicplayer2;
 
-
-import static com.example.mymusicplayer2.AllSongsFragment.mySortPreferences;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,20 +8,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 import com.google.android.material.tabs.TabLayout;
@@ -40,9 +39,11 @@ import java.util.List;
 
 
 
+/** @noinspection deprecation*/
 public class MainActivity extends AppCompatActivity {
     public static  boolean SHOW_MINI_PLAYER = false;
     public static ArrayList<MusicFiles> musicFiles;
+    ProgressBar progressBar ;
      TabLayout tabLayout;
      ViewPager viewPager;
      public static boolean shuffleBoolean=false;
@@ -55,11 +56,14 @@ public class MainActivity extends AppCompatActivity {
     public static String ARTIST_TO_FRAG=null;
     public static String SONG_NAME_TO_FRAG=null;
     public static boolean isBottomFragShown =false;
-
-     @Override
+    public static boolean isPlayerActivityShown = false;
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewPager=findViewById(R.id.viewPager);
+        tabLayout=findViewById(R.id.tabLayout);
+        progressBar=findViewById(R.id.progress_bar);
         musicFiles=new ArrayList<>();
         runTimePermission();
      }
@@ -69,38 +73,18 @@ public class MainActivity extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        initViewPager();
-                        musicFiles = getAllAudio(getApplicationContext());
+                        new InitTask().execute();
                     }
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-
-                        //Keeps asking for external storage permission
                         permissionToken.continuePermissionRequest();
                     }
                 }).check();
-
     }
 
     public  ArrayList<MusicFiles> getAllAudio(Context context) {
-
-        SharedPreferences preferences=getSharedPreferences(mySortPreferences,MODE_PRIVATE);
-        String sortOrder=preferences.getString("sorting","sortByName");
-        String order=null;
         ArrayList<MusicFiles> tempAudioList =new ArrayList<>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        switch (sortOrder)
-        {
-            case "sortByName":
-                order=MediaStore.MediaColumns.DISPLAY_NAME+" ASC";
-                break;
-            case "sortByDate":
-                order=MediaStore.MediaColumns.DISPLAY_NAME+" DESC";
-                break;
-            case "sortBySize":
-                order=MediaStore.MediaColumns.DISPLAY_NAME+" ASC";
-                break;
-        }
         String[] projection={
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ALBUM,
@@ -117,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         * projection:- particular set of columns you want query.
         * order :- it takes order of sorting.
         * */
-        Cursor cursor=context.getContentResolver().query(uri,projection,null,null,order);
+        Cursor cursor=context.getContentResolver().query(uri,projection,null,null,null);
         if(cursor!=null)
         {
             while (cursor.moveToNext())
@@ -135,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         return tempAudioList;
     }
 
+    /** @noinspection deprecation*/
     public static class ViewPagerAdapter extends FragmentPagerAdapter {
         private final ArrayList<Fragment> fragments;
         private final ArrayList<String> titles;
@@ -169,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initViewPager() {
-         viewPager=findViewById(R.id.viewPager);
-         tabLayout=findViewById(R.id.tabLayout);
-
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragments(new AllSongsFragment(),"All Songs");
         viewPagerAdapter.addFragments(new AlbumFragment(),"Albums");
@@ -185,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isPlayerActivityShown = false;
         SharedPreferences preferences=getSharedPreferences(MUSIC_LAST_PLAYED,MODE_PRIVATE);
         String path=preferences.getString(MUSIC_FILE,null);
         String artist=preferences.getString(ARTIST_NAME,null);
@@ -200,6 +183,27 @@ public class MainActivity extends AppCompatActivity {
             PATH_TO_FRAG=null;
             ARTIST_TO_FRAG=null;
             SONG_NAME_TO_FRAG= null;
+        }
+    }
+    @SuppressLint("StaticFieldLeak")
+    class InitTask extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+            progressBar.setVisibility(View.INVISIBLE);
+            initViewPager();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            musicFiles = getAllAudio(getApplicationContext());
+            return null;
         }
     }
 }
