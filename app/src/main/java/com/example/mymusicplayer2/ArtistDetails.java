@@ -29,7 +29,7 @@ public class ArtistDetails extends AppCompatActivity {
         artistMusicFiles=new ArrayList<>();
         artistDetailListView=findViewById(R.id.artistDetailListView);
         artistNameTop=findViewById(R.id.artistNameTop);
-        artistDetailTV.findViewById(R.id.artist_detail_song_no_item_tv);
+        artistDetailTV=findViewById(R.id.artist_detail_song_no_item_tv);
         artistName=getIntent().getStringExtra("artistName");
         artistDetailArrayList=new ArrayList<>();
         for(int i=0;i<musicFiles.size();i++){

@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViewPager() {
         ViewPagerAdapter viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragments(new RecentSongsFragment(),"Recent");
         viewPagerAdapter.addFragments(new AllSongsFragment(),"All Songs");
         viewPagerAdapter.addFragments(new AlbumFragment(),"Albums");
         viewPagerAdapter.addFragments(new FolderFragment(),"Folder");
@@ -198,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(unused);
             progressBar.setVisibility(View.INVISIBLE);
             initViewPager();
+            viewPager.setCurrentItem(1);
         }
 
         @Override

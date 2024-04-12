@@ -64,12 +64,14 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
     ActionPlaying actionPlaying;
+    public RecentDbHelper recentDbHelper;
 
     /* onStartCommand(Intent intent, int flags, int startId) is a method that is used in Android to start or re-start a Service.
        It is called by the system when a client sends a request to start the Service, using the startService(Intent) method.
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        recentDbHelper = new RecentDbHelper(getApplicationContext());
         if (intent != null) {
             int myPosition = intent.getIntExtra("servicePosition", -1);
             String actionName = intent.getStringExtra("ActionName");
@@ -170,6 +172,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
            The base context is the context from which all other contexts in the application are derived.
          */
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+        recentDbHelper.addRecentSong(songsList.get(position));
     }
 
     void pause() {
